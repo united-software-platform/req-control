@@ -3,7 +3,7 @@ version: "3.9"
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: tracker_postgres
+    container_name: reqcontrol_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -21,7 +21,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: tracker_rabbitmq
+    container_name: reqcontrol_rabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
@@ -40,7 +40,7 @@ services:
 
   liquibase:
     image: liquibase/liquibase:4.27
-    container_name: tracker_liquibase
+    container_name: reqcontrol_liquibase
     depends_on:
       postgres:
         condition: service_healthy
