@@ -7,7 +7,6 @@ docker/.env
 
 # PHP
 vendor/
-composer.lock
 
 # Env
 .env
