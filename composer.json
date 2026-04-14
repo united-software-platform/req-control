@@ -24,7 +24,9 @@
         "lint": "php-cs-fixer fix --dry-run --diff",
         "lint:fix": "php-cs-fixer fix",
         "analyse": "phpstan analyse",
-        "test": "phpunit"
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite Unit",
+        "test:integration": "phpunit --testsuite Integration"
     },
     "config": {
         "sort-packages": true,

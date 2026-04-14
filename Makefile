@@ -38,6 +38,12 @@ check-style:
 test:
 	@$(PHP_EXEC) vendor/bin/phpunit
 
+test-unit:
+	@$(PHP_EXEC) vendor/bin/phpunit --testsuite Unit
+
+migrate:
+	@$(DOCKER_COMPOSE_COMMAND) --profile migrate run --rm liquibase
+
 code-setup:
 	make analyze-code
 	make fix-style

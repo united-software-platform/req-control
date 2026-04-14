@@ -1,0 +1,5 @@
+data/
+var/
+.git/
+.venv/
+.idea/

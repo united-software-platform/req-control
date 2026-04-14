@@ -36,22 +36,6 @@ services:
       timeout: 5s
       retries: 10
 
-  php:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
-    container_name: reqcontrol_php
-    restart: unless-stopped
-    working_dir: /app
-    volumes:
-      - .:/app
-    command: sleep infinity
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-
   liquibase:
     image: liquibase/liquibase:4.27
     container_name: reqcontrol_liquibase
@@ -62,10 +46,29 @@ services:
       LIQUIBASE_COMMAND_URL: ${LIQUIBASE_URL}
       LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_USERNAME}
       LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_PASSWORD}
-      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/db.changelog-master.xml
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: db.changelog-master.xml
+      LIQUIBASE_SEARCH_PATH: /liquibase/changelog
     volumes:
       - ./migrations:/liquibase/changelog
     command: update
     profiles:
       - migrate
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: reqcontrol_php
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: sleep infinity
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
 

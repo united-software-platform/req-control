@@ -29,13 +29,11 @@ req-control/
 │   └── php/
 │       └── Dockerfile           # PHP 8.3-cli-alpine + Composer
 ├── migrations/
-│   ├── changelog/
-│   │   └── db.changelog-master.xml
+│   ├── db.changelog-master.xml
 │   └── sql/                     # Liquibase SQL-миграции
 ├── src/                         # Исходный код приложения (PSR-4: App\)
 ├── tests/
-│   ├── Unit/                    # Юнит-тесты
-│   └── Integration/             # Интеграционные тесты
+│   └── Unit/                    # Юнит-тесты
 ├── docs/                        # Документация
 ├── data/                        # Тома БД и брокера (не в git)
 ├── docker-compose.yml
@@ -74,7 +72,7 @@ make restart          # Перезапустить контейнеры
 make shell            # Войти в PHP-контейнер
 
 make test             # Запустить тесты (PHPUnit)
-make analyse          # Статический анализ (PHPStan, уровень 8)
+make analyze-code     # Статический анализ (PHPStan, уровень 8)
 make check-style      # Проверить стиль кода (PHP-CS-Fixer, dry-run)
 make fix-style        # Исправить стиль кода
 make code-setup       # Анализ + исправление стиля
@@ -106,3 +104,4 @@ make composer-update  # composer update
 ## Документация
 
 - [Схема данных](docs/database/schema.sql)
+- [Компактное описание схемы](docs/schema.toon)
