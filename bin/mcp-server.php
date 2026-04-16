@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Infrastructure\Mcp\Tool\GetTaskStatusesTool;
+use App\Task\Infrastructure\Mcp\Tool\GetTaskStatusesTool;
 use Mcp\Server;
 use Mcp\Server\Transport\StdioTransport;
 

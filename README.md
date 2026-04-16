@@ -45,7 +45,6 @@ req-control/
 │   │   ├── Domain/              # Entities, Value Objects, Repository interfaces
 │   │   ├── Application/         # Use Cases, Input/Output DTO
 │   │   └── Infrastructure/      # Doctrine, HTTP, MCP-инструменты
-│   ├── Controller/              # Symfony HTTP-контроллеры
 │   └── Kernel.php
 ├── tests/
 │   └── Unit/                    # Юнит-тесты
@@ -127,17 +126,54 @@ Epic
 
 ## MCP-сервер
 
-Приложение предоставляет [MCP](https://modelcontextprotocol.io)-сервер для интеграции с AI-инструментами (Claude Code и другими):
-
-```bash
-php bin/mcp-server.php
-```
+Приложение предоставляет [MCP](https://modelcontextprotocol.io)-сервер для интеграции с AI-инструментами (Claude Code и другими).
 
 | Инструмент          | Описание                                              |
 |---------------------|-------------------------------------------------------|
 | `get_task_statuses` | Возвращает все статусы задач из `core.statuses`       |
 
 Сервер использует stdio transport и читает параметры подключения к БД из переменных окружения (`POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`).
+
+### Локальный запуск
+
+```bash
+php bin/mcp-server.php
+```
+
+### Запуск в контейнере
+
+MCP-сервер запускается внутри контейнера `reqcontrol_php` через `docker exec`. Контейнеры должны быть запущены (`make up`).
+
+**Настройка в Claude Code** — добавить в `.claude/settings.json` проекта:
+
+```json
+{
+  "mcpServers": {
+    "req-control": {
+      "command": "docker",
+      "args": [
+        "exec", "-i",
+        "-e", "POSTGRES_HOST=postgres",
+        "-e", "POSTGRES_PORT=5432",
+        "-e", "POSTGRES_DB=<POSTGRES_DB>",
+        "-e", "POSTGRES_USER=<POSTGRES_USER>",
+        "-e", "POSTGRES_PASSWORD=<POSTGRES_PASSWORD>",
+        "reqcontrol_php",
+        "php", "/app/bin/mcp-server.php"
+      ]
+    }
+  }
+}
+```
+
+Замените `<POSTGRES_DB>`, `<POSTGRES_USER>`, `<POSTGRES_PASSWORD>` значениями из `.env`.
+
+**Проверка подключения:**
+
+```bash
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
+  | docker exec -i reqcontrol_php php /app/bin/mcp-server.php
+```
 
 ## Claude Code Skills
 
