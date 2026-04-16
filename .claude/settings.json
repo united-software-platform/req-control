@@ -1,8 +1,1 @@
-{
-  "mcpServers": {
-    "req-control": {
-      "command": "docker",
-      "args": ["exec", "-i", "reqcontrol_php", "php", "/app/bin/mcp-server.php"]
-    }
-  }
-}
+{}

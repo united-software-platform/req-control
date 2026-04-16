@@ -26,7 +26,7 @@ $pdo = new PDO(
 $server = Server::builder()
     ->setServerInfo(name: 'req-control', version: '1.0.0', description: 'REQ-CONTROL MCP Server')
     ->addTool(
-        handler: new GetTaskStatusesTool($pdo),
+        handler: \Closure::fromCallable(new GetTaskStatusesTool($pdo)),
         name: 'get_task_statuses',
         description: 'Возвращает список всех статусов задач из справочника core.statuses (id, name).',
     )
