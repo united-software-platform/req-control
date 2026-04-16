@@ -18,7 +18,7 @@ REQ-CONTROL СТР — централизованная система, обес
 
 | Компонент       | Технология              | Назначение                                  |
 |-----------------|-------------------------|---------------------------------------------|
-| Backend         | PHP 8.4                 | Бизнес-логика приложения                    |
+| Backend         | PHP 8.4 CLI             | MCP-сервер и бизнес-логика                  |
 | База данных     | PostgreSQL 16           | Хранилище требований и связанных сущностей  |
 | Миграции        | Liquibase 4.27          | Версионирование схемы БД                    |
 | Брокер          | RabbitMQ 3.13           | Обмен событиями между сервисами             |
@@ -36,7 +36,7 @@ req-control/
 │   └── mcp-server.php           # MCP-сервер (stdio transport)
 ├── docker/
 │   └── php/
-│       └── Dockerfile           # PHP 8.3-cli-alpine + Composer
+│       └── Dockerfile           # PHP 8.4-cli-alpine + Composer; CMD = mcp-server.php
 ├── migrations/
 │   ├── db.changelog-master.xml
 │   └── sql/                     # Liquibase SQL-миграции
@@ -142,7 +142,9 @@ php bin/mcp-server.php
 
 ### Запуск в контейнере
 
-MCP-сервер запускается внутри контейнера `reqcontrol_php` через `docker exec`. Контейнеры должны быть запущены (`make up`).
+MCP-сервер запускается автоматически при старте контейнера `reqcontrol_php` (`make up`). Переменные окружения для подключения к БД пробрасываются через `docker-compose.yml`.
+
+Для подключения из Claude Code или другого MCP-клиента используется `docker exec -i`, который запускает новый экземпляр сервера поверх работающего контейнера.
 
 **Настройка в Claude Code** — добавить в `.claude/settings.json` проекта:
 
@@ -151,22 +153,11 @@ MCP-сервер запускается внутри контейнера `reqco
   "mcpServers": {
     "req-control": {
       "command": "docker",
-      "args": [
-        "exec", "-i",
-        "-e", "POSTGRES_HOST=postgres",
-        "-e", "POSTGRES_PORT=5432",
-        "-e", "POSTGRES_DB=<POSTGRES_DB>",
-        "-e", "POSTGRES_USER=<POSTGRES_USER>",
-        "-e", "POSTGRES_PASSWORD=<POSTGRES_PASSWORD>",
-        "reqcontrol_php",
-        "php", "/app/bin/mcp-server.php"
-      ]
+      "args": ["exec", "-i", "reqcontrol_php", "php", "/app/bin/mcp-server.php"]
     }
   }
 }
 ```
-
-Замените `<POSTGRES_DB>`, `<POSTGRES_USER>`, `<POSTGRES_PASSWORD>` значениями из `.env`.
 
 **Проверка подключения:**
 
