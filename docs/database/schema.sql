@@ -251,4 +251,4 @@ INSERT INTO core.statuses (id, name) VALUES
 -- ## Changelog
 -- =============================================================================
 
--- 2026-04-16 | Claude | initial schema version 1.0.0: core.statuses, core.epics, core.stories, core.tasks, core.functional_requirements, core.business_requirements, core.projects, core.entity_types, core.project_entities
+-- 2026-04-16 | Alexey Gaybovich | initial schema version 1.0.0: core.statuses, core.epics, core.stories, core.tasks, core.functional_requirements, core.business_requirements, core.projects, core.entity_types, core.project_entities
