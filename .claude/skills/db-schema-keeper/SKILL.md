@@ -1,7 +1,7 @@
 ---
 name: db-schema-keeper
 description: "Протокол для любых задач, связанных с базой данных. Использовать этот навык когда пользователь просит создать миграцию, добавить/изменить/удалить колонку, таблицу, индекс или внешний ключ, а также когда задаёт вопрос о структуре БД. Триггерные слова: таблица, колонка, индекс, миграция, схема БД, foreign key, ALTER TABLE, CREATE TABLE."
-allowed-tools: Read, Write, Edit
+allowed-tools: Read, Write, Edit, Bash
 ---
 
 # db-schema-keeper
@@ -38,10 +38,18 @@ Read: docs/database/schema.sql
 
 ### Шаг 4. Дописать строку в changelog (только при изменении структуры)
 
-После обновления schema.sql добавить строку changelog в конец файла:
+После обновления schema.sql добавить строку changelog в конец файла.
+
+Перед записью получить имя автора из git:
+
+```bash
+git config user.name
+```
+
+Затем дописать строку:
 
 ```sql
--- YYYY-MM-DD | Claude | <краткое описание изменения на английском>
+-- YYYY-MM-DD | <git user.name> | <краткое описание изменения на английском>
 ```
 
 Если секции changelog в файле ещё нет, создать её перед записью:
@@ -51,12 +59,13 @@ Read: docs/database/schema.sql
 -- ## Changelog
 -- =============================================================================
 
--- YYYY-MM-DD | Claude | <краткое описание изменения на английском>
+-- YYYY-MM-DD | <git user.name> | <краткое описание изменения на английском>
 ```
 
 ## Правила changelog
 
-- Формат строго: `-- YYYY-MM-DD | Claude | <description>`
+- Формат строго: `-- YYYY-MM-DD | <git user.name> | <description>`
+- Автор: всегда брать из `git config user.name`, не подставлять имя вручную
 - Дата: текущая дата в формате YYYY-MM-DD
 - Описание: кратко на английском, например:
   - `added deleted_at (timestamptz) to users`
@@ -75,7 +84,7 @@ Read: docs/database/schema.sql
 3. Обновить `docs/database/schema.sql` — дописать `deleted_at TIMESTAMPTZ NULL` в определение таблицы
 4. Добавить в changelog:
    ```sql
-   -- 2026-04-16 | Claude | added deleted_at (timestamptz nullable) to core.tasks
+   -- 2026-04-16 | Alexey Gaybovich | added deleted_at (timestamptz nullable) to core.tasks
    ```
 
 ### Пример 2: создание новой таблицы и миграции
@@ -87,7 +96,7 @@ Read: docs/database/schema.sql
 3. Добавить определение таблицы в `docs/database/schema.sql` через Edit
 4. Добавить в changelog:
    ```sql
-   -- 2026-04-16 | Claude | created table core.comments with FK to core.tasks
+   -- 2026-04-16 | Alexey Gaybovich | created table core.comments with FK to core.tasks
    ```
 
 ### Пример 3: вопрос только на чтение
