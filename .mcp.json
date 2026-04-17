@@ -3,6 +3,17 @@
     "req-control": {
       "command": "docker",
       "args": ["exec", "-i", "reqcontrol_php", "php", "/app/bin/mcp-server.php"]
+    },
+    "tldr": {
+      "command": "tldr-mcp",
+      "args": ["--project", "."]
+    },
+    "excel": {
+      "command": "excel-mcp-server",
+      "args": ["stdio"],
+      "env": {
+        "EXCEL_FILES_PATH": "docs"
+      }
     }
   }
 }

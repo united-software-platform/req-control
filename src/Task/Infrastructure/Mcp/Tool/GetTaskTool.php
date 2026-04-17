@@ -30,14 +30,14 @@ final class GetTaskTool
 
         return CallToolResult::success(
             content: [new TextContent([
-                'id'          => $t->id,
-                'story_id'    => $t->storyId,
-                'title'       => $t->title,
+                'id' => $t->id,
+                'story_id' => $t->storyId,
+                'title' => $t->title,
                 'description' => $t->description,
-                'status'      => $t->status,
-                'readiness'   => $t->readiness,
-                'created_at'  => $t->createdAt,
-                'updated_at'  => $t->updatedAt,
+                'status' => $t->status,
+                'readiness' => $t->readiness,
+                'created_at' => $t->createdAt,
+                'updated_at' => $t->updatedAt,
             ])],
         );
     }

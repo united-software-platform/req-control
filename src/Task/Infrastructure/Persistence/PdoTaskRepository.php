@@ -58,7 +58,7 @@ final class PdoTaskRepository implements TaskRepositoryInterface
         /** @var array{id: int, story_id: int, title: string, description: null|string, status: int, readiness: int, created_at: string, updated_at: string}|false $row */
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row === false) {
+        if (false === $row) {
             throw new RuntimeException(sprintf('Task #%d not found', $id));
         }
 
@@ -72,6 +72,33 @@ final class PdoTaskRepository implements TaskRepositoryInterface
             $row['created_at'],
             $row['updated_at'],
         );
+    }
+
+    public function update(int $id, ?string $title, ?string $description, ?int $readiness, ?int $status): void
+    {
+        $sets = ['updated_at = now()'];
+        $params = ['id' => $id];
+
+        if (null !== $title) {
+            $sets[] = 'title = :title';
+            $params['title'] = $title;
+        }
+        if (null !== $description) {
+            $sets[] = 'description = :description';
+            $params['description'] = $description;
+        }
+        if (null !== $readiness) {
+            $sets[] = 'readiness = :readiness';
+            $params['readiness'] = $readiness;
+        }
+        if (null !== $status) {
+            $sets[] = 'status = :status';
+            $params['status'] = $status;
+        }
+
+        $this->pdo->prepare(
+            'UPDATE core.tasks SET ' . implode(', ', $sets) . ' WHERE id = :id',
+        )->execute($params);
     }
 
     public function listByStoryId(int $storyId): array

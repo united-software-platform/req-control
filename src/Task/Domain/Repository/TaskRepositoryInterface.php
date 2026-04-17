@@ -14,6 +14,8 @@ interface TaskRepositoryInterface
 
     public function findById(int $id): TaskDetail;
 
+    public function update(int $id, ?string $title, ?string $description, ?int $readiness, ?int $status): void;
+
     /** @return list<TaskSummary> */
     public function listByStoryId(int $storyId): array;
 }

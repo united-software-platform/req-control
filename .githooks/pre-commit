@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSER_JSON="$(git rev-parse --show-toplevel)/composer.json"
+
+current=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$COMPOSER_JSON")
+major=$(echo "$current" | cut -d. -f1)
+minor=$(echo "$current" | cut -d. -f2)
+patch=$(echo "$current" | cut -d. -f3)
+
+next="${major}.${minor}.$((patch + 1))"
+
+sed -i "s/\"version\": \"${current}\"/\"version\": \"${next}\"/" "$COMPOSER_JSON"
+
+git add "$COMPOSER_JSON"
+
+echo "Version bumped: ${current} → ${next}"

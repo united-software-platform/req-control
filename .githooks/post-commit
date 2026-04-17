@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSER_JSON="$(git rev-parse --show-toplevel)/composer.json"
+
+version=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$COMPOSER_JSON")
+tag="v${version}"
+
+if git tag --list "$tag" | grep -q "$tag"; then
+    echo "Tag ${tag} already exists, skipping."
+else
+    git tag "$tag"
+    echo "Tagged: ${tag}"
+fi

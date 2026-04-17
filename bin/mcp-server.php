@@ -12,6 +12,7 @@ use App\Task\Application\UseCase\GetEpicStories\GetEpicStoriesUseCase;
 use App\Task\Application\UseCase\GetEpics\GetEpicsUseCase;
 use App\Task\Application\UseCase\GetStoryTasks\GetStoryTasksUseCase;
 use App\Task\Application\UseCase\GetTask\GetTaskUseCase;
+use App\Task\Application\UseCase\UpdateTask\UpdateTaskUseCase;
 use App\Task\Infrastructure\Mcp\Tool\CreateEpicTool;
 use App\Task\Infrastructure\Mcp\Tool\CreateStoryTool;
 use App\Task\Infrastructure\Mcp\Tool\CreateTaskTool;
@@ -20,11 +21,16 @@ use App\Task\Infrastructure\Mcp\Tool\GetEpicsTool;
 use App\Task\Infrastructure\Mcp\Tool\GetStoryTasksTool;
 use App\Task\Infrastructure\Mcp\Tool\GetTaskStatusesTool;
 use App\Task\Infrastructure\Mcp\Tool\GetTaskTool;
+use App\Task\Infrastructure\Mcp\Tool\UpdateTaskTool;
 use App\Task\Infrastructure\Persistence\PdoEpicRepository;
 use App\Task\Infrastructure\Persistence\PdoStoryRepository;
 use App\Task\Infrastructure\Persistence\PdoTaskRepository;
 use Mcp\Server;
 use Mcp\Server\Transport\StdioTransport;
+
+/** @var array{version: string} $composerJson */
+$composerJson = json_decode((string) file_get_contents(__DIR__ . '/../composer.json'), true);
+$appVersion = $composerJson['version'] ?? '0.0.0';
 
 $dsn = sprintf(
     'pgsql:host=%s;port=%s;dbname=%s',
@@ -51,9 +57,10 @@ $getEpicsTool        = new GetEpicsTool(new GetEpicsUseCase($epicRepository));
 $getEpicStoriesTool  = new GetEpicStoriesTool(new GetEpicStoriesUseCase($storyRepository));
 $getStoryTasksTool   = new GetStoryTasksTool(new GetStoryTasksUseCase($taskRepository));
 $getTaskTool         = new GetTaskTool(new GetTaskUseCase($taskRepository));
+$updateTaskTool      = new UpdateTaskTool(new UpdateTaskUseCase($taskRepository));
 
 $server = Server::builder()
-    ->setServerInfo(name: 'req-control', version: '1.0.0', description: 'REQ-CONTROL MCP Server')
+    ->setServerInfo(name: 'req-control', version: $appVersion, description: 'REQ-CONTROL MCP Server')
     ->addTool(
         handler: \Closure::fromCallable(new GetTaskStatusesTool($pdo)),
         name: 'get_task_statuses',
@@ -93,6 +100,11 @@ $server = Server::builder()
         handler: \Closure::fromCallable($getTaskTool),
         name: 'get_task',
         description: 'Возвращает детали задачи: id, title, description, статус, readiness %, created_at, updated_at.',
+    )
+    ->addTool(
+        handler: \Closure::fromCallable($updateTaskTool),
+        name: 'update_task',
+        description: 'Обновляет поля задачи: title, description, readiness (0–100), status из справочника. Передавай только изменяемые поля.',
     )
     ->build();
 
