@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Task\Infrastructure\Persistence;
 
 use App\Task\Domain\Model\Task;
+use App\Task\Domain\Model\TaskDetail;
 use App\Task\Domain\Model\TaskSummary;
 use App\Task\Domain\Repository\TaskRepositoryInterface;
 use PDO;
+use RuntimeException;
 
 final class PdoTaskRepository implements TaskRepositoryInterface
 {
@@ -39,6 +41,36 @@ final class PdoTaskRepository implements TaskRepositoryInterface
             $row['description'],
             (int) $row['status'],
             (int) $row['readiness'],
+        );
+    }
+
+    public function findById(int $id): TaskDetail
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, story_id, title, description, status, readiness,
+                    to_char(created_at AT TIME ZONE \'UTC\', \'YYYY-MM-DD"T"HH24:MI:SS"Z"\') AS created_at,
+                    to_char(updated_at AT TIME ZONE \'UTC\', \'YYYY-MM-DD"T"HH24:MI:SS"Z"\') AS updated_at
+             FROM core.tasks
+             WHERE id = :id',
+        );
+        $stmt->execute(['id' => $id]);
+
+        /** @var array{id: int, story_id: int, title: string, description: null|string, status: int, readiness: int, created_at: string, updated_at: string}|false $row */
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row === false) {
+            throw new RuntimeException(sprintf('Task #%d not found', $id));
+        }
+
+        return new TaskDetail(
+            (int) $row['id'],
+            (int) $row['story_id'],
+            $row['title'],
+            $row['description'],
+            (int) $row['status'],
+            (int) $row['readiness'],
+            $row['created_at'],
+            $row['updated_at'],
         );
     }
 

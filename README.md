@@ -134,6 +134,7 @@ Epic
 | `get_epics`         | Возвращает список всех эпиков: id, title, количество сторей     |
 | `get_epic_stories`  | Возвращает список сторей эпика: id, title, средний % готовности |
 | `get_story_tasks`   | Возвращает список задач стори: id, title, статус, readiness %   |
+| `get_task`          | Возвращает детали задачи: id, title, description, статус, readiness %, created_at, updated_at |
 | `create_epic`       | Создаёт новый эпик; возвращает id и title                       |
 | `create_story`      | Создаёт новую стори внутри эпика; возвращает id и title         |
 | `create_task`       | Создаёт новую задачу внутри стори со статусом «Новая» (1)       |

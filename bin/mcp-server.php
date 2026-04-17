@@ -11,6 +11,7 @@ use App\Task\Application\UseCase\CreateTask\CreateTaskUseCase;
 use App\Task\Application\UseCase\GetEpicStories\GetEpicStoriesUseCase;
 use App\Task\Application\UseCase\GetEpics\GetEpicsUseCase;
 use App\Task\Application\UseCase\GetStoryTasks\GetStoryTasksUseCase;
+use App\Task\Application\UseCase\GetTask\GetTaskUseCase;
 use App\Task\Infrastructure\Mcp\Tool\CreateEpicTool;
 use App\Task\Infrastructure\Mcp\Tool\CreateStoryTool;
 use App\Task\Infrastructure\Mcp\Tool\CreateTaskTool;
@@ -18,6 +19,7 @@ use App\Task\Infrastructure\Mcp\Tool\GetEpicStoriesTool;
 use App\Task\Infrastructure\Mcp\Tool\GetEpicsTool;
 use App\Task\Infrastructure\Mcp\Tool\GetStoryTasksTool;
 use App\Task\Infrastructure\Mcp\Tool\GetTaskStatusesTool;
+use App\Task\Infrastructure\Mcp\Tool\GetTaskTool;
 use App\Task\Infrastructure\Persistence\PdoEpicRepository;
 use App\Task\Infrastructure\Persistence\PdoStoryRepository;
 use App\Task\Infrastructure\Persistence\PdoTaskRepository;
@@ -48,6 +50,7 @@ $createTaskTool  = new CreateTaskTool(new CreateTaskUseCase($taskRepository));
 $getEpicsTool        = new GetEpicsTool(new GetEpicsUseCase($epicRepository));
 $getEpicStoriesTool  = new GetEpicStoriesTool(new GetEpicStoriesUseCase($storyRepository));
 $getStoryTasksTool   = new GetStoryTasksTool(new GetStoryTasksUseCase($taskRepository));
+$getTaskTool         = new GetTaskTool(new GetTaskUseCase($taskRepository));
 
 $server = Server::builder()
     ->setServerInfo(name: 'req-control', version: '1.0.0', description: 'REQ-CONTROL MCP Server')
@@ -85,6 +88,11 @@ $server = Server::builder()
         handler: \Closure::fromCallable($getStoryTasksTool),
         name: 'get_story_tasks',
         description: 'Возвращает список задач стори: id, title, статус, readiness %.',
+    )
+    ->addTool(
+        handler: \Closure::fromCallable($getTaskTool),
+        name: 'get_task',
+        description: 'Возвращает детали задачи: id, title, description, статус, readiness %, created_at, updated_at.',
     )
     ->build();
 
