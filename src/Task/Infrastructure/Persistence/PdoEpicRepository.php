@@ -15,17 +15,22 @@ final readonly class PdoEpicRepository implements EpicRepositoryInterface
         private PDO $pdo,
     ) {}
 
-    public function create(string $title, ?string $description): Epic
+    public function create(int $projectId, string $code, string $title, ?string $description): Epic
     {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO core.epics (title, description) VALUES (:title, :description) RETURNING id, title, description',
+            'INSERT INTO core.epics (code, title, description) VALUES (:code, :title, :description) RETURNING id, code, title, description',
         );
-        $stmt->execute(['title' => $title, 'description' => $description]);
+        $stmt->execute(['code' => $code, 'title' => $title, 'description' => $description]);
 
-        /** @var array{id: int, title: string, description: null|string} $row */
+        /** @var array{id: int, code: string, title: string, description: null|string} $row */
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return new Epic((int) $row['id'], $row['title'], $row['description']);
+        $this->pdo->prepare(
+            'INSERT INTO core.project_entities (project_id, entity_type_id, entity_id)
+             SELECT :project_id, et.id, :entity_id FROM core.entity_types et WHERE et.type = \'epic\'',
+        )->execute(['project_id' => $projectId, 'entity_id' => $row['id']]);
+
+        return new Epic((int) $row['id'], $row['code'], $row['title'], $row['description']);
     }
 
     public function listAll(): array

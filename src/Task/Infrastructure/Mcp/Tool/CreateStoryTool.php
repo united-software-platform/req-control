@@ -32,7 +32,7 @@ final readonly class CreateStoryTool
         $output = $this->useCase->execute(new CreateStoryInput($epicId, $title, $description));
 
         return CallToolResult::success(
-            content: [new TextContent(['id' => $output->id, 'title' => $output->title])],
+            content: [new TextContent(['id' => $output->id, 'code' => $output->code, 'title' => $output->title])],
         );
     }
 }

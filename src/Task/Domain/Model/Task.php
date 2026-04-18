@@ -8,6 +8,7 @@ final readonly class Task
 {
     public function __construct(
         public int $id,
+        public string $code,
         public int $storyId,
         public string $title,
         public ?string $description,

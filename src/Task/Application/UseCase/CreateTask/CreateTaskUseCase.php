@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\Task\Application\UseCase\CreateTask;
 
+use App\Shared\Application\Service\CodeGeneratorInterface;
+use App\Task\Domain\Repository\ProjectRepositoryInterface;
 use App\Task\Domain\Repository\TaskRepositoryInterface;
 
 final readonly class CreateTaskUseCase implements CreateTaskUseCaseInterface
 {
     public function __construct(
         private TaskRepositoryInterface $tasks,
+        private ProjectRepositoryInterface $projects,
+        private CodeGeneratorInterface $codeGenerator,
     ) {}
 
     public function execute(CreateTaskInput $input): CreateTaskOutput
     {
-        $task = $this->tasks->create($input->storyId, $input->title, $input->description);
+        $project = $this->projects->findByStoryId($input->storyId);
+        $code = $this->codeGenerator->generate($project->code, 'task');
 
-        return new CreateTaskOutput($task->id, $task->title, $task->status);
+        $task = $this->tasks->create($project->id, $code, $input->storyId, $input->title, $input->description);
+
+        return new CreateTaskOutput($task->id, $task->code, $task->title, $task->status);
     }
 }

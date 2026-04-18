@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Task\Domain\Model;
 
-final readonly class Story
+final readonly class Project
 {
     public function __construct(
         public int $id,
         public string $code,
-        public int $epicId,
-        public string $title,
-        public ?string $description,
     ) {}
 }

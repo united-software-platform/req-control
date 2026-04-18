@@ -22,15 +22,17 @@ final readonly class CreateEpicTool
         description: 'Создаёт новый эпик. Возвращает id и title созданного эпика.',
     )]
     public function __invoke(
+        #[Schema(description: 'ID проекта', minimum: 1)]
+        int $projectId,
         #[Schema(description: 'Название эпика', minLength: 1, maxLength: 200)]
         string $title,
         #[Schema(description: 'Описание эпика (необязательно)')]
         ?string $description = null,
     ): CallToolResult {
-        $output = $this->useCase->execute(new CreateEpicInput($title, $description));
+        $output = $this->useCase->execute(new CreateEpicInput($projectId, $title, $description));
 
         return CallToolResult::success(
-            content: [new TextContent(['id' => $output->id, 'title' => $output->title])],
+            content: [new TextContent(['id' => $output->id, 'code' => $output->code, 'title' => $output->title])],
         );
     }
 }

@@ -22,7 +22,10 @@ use App\Task\Infrastructure\Mcp\Tool\GetStoryTasksTool;
 use App\Task\Infrastructure\Mcp\Tool\GetTaskStatusesTool;
 use App\Task\Infrastructure\Mcp\Tool\GetTaskTool;
 use App\Task\Infrastructure\Mcp\Tool\UpdateTaskTool;
+use App\Shared\Domain\Service\EntityCodeGenerator;
+use App\Shared\Infrastructure\Persistence\PostgresCodeGenerator;
 use App\Task\Infrastructure\Persistence\PdoEpicRepository;
+use App\Task\Infrastructure\Persistence\PdoProjectRepository;
 use App\Task\Infrastructure\Persistence\PdoStoryRepository;
 use App\Task\Infrastructure\Persistence\PdoTaskRepository;
 use Mcp\Server;
@@ -46,6 +49,9 @@ $pdo = new PDO(
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
 );
 
+$codeGenerator     = new PostgresCodeGenerator($pdo, new EntityCodeGenerator());
+$projectRepository = new PdoProjectRepository($pdo);
+
 $epicRepository  = new PdoEpicRepository($pdo);
 $storyRepository = new PdoStoryRepository($pdo);
 $taskRepository  = new PdoTaskRepository($pdo);
@@ -58,17 +64,17 @@ $server = Server::builder()
         description: 'Возвращает список всех статусов задач из справочника core.statuses (id, name).',
     )
     ->addTool(
-        handler: new CreateEpicTool(new CreateEpicUseCase($epicRepository))(...),
+        handler: new CreateEpicTool(new CreateEpicUseCase($epicRepository, $projectRepository, $codeGenerator))(...),
         name: 'create_epic',
         description: 'Создаёт новый эпик. Возвращает id и title созданного эпика.',
     )
     ->addTool(
-        handler: new CreateStoryTool(new CreateStoryUseCase($storyRepository))(...),
+        handler: new CreateStoryTool(new CreateStoryUseCase($storyRepository, $projectRepository, $codeGenerator))(...),
         name: 'create_story',
         description: 'Создаёт новую стори внутри эпика. Возвращает id и title созданной стори.',
     )
     ->addTool(
-        handler: new CreateTaskTool(new CreateTaskUseCase($taskRepository))(...),
+        handler: new CreateTaskTool(new CreateTaskUseCase($taskRepository, $projectRepository, $codeGenerator))(...),
         name: 'create_task',
         description: 'Создаёт новую задачу внутри стори. Статус устанавливается «Новая» (1). Возвращает id, title и status.',
     )

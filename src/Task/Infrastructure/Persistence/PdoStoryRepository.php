@@ -15,17 +15,22 @@ final readonly class PdoStoryRepository implements StoryRepositoryInterface
         private PDO $pdo,
     ) {}
 
-    public function create(int $epicId, string $title, ?string $description): Story
+    public function create(int $projectId, string $code, int $epicId, string $title, ?string $description): Story
     {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO core.stories (epic_id, title, description) VALUES (:epic_id, :title, :description) RETURNING id, epic_id, title, description',
+            'INSERT INTO core.stories (code, epic_id, title, description) VALUES (:code, :epic_id, :title, :description) RETURNING id, code, epic_id, title, description',
         );
-        $stmt->execute(['epic_id' => $epicId, 'title' => $title, 'description' => $description]);
+        $stmt->execute(['code' => $code, 'epic_id' => $epicId, 'title' => $title, 'description' => $description]);
 
-        /** @var array{id: int, epic_id: int, title: string, description: null|string} $row */
+        /** @var array{id: int, code: string, epic_id: int, title: string, description: null|string} $row */
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return new Story((int) $row['id'], (int) $row['epic_id'], $row['title'], $row['description']);
+        $this->pdo->prepare(
+            'INSERT INTO core.project_entities (project_id, entity_type_id, entity_id)
+             SELECT :project_id, et.id, :entity_id FROM core.entity_types et WHERE et.type = \'story\'',
+        )->execute(['project_id' => $projectId, 'entity_id' => $row['id']]);
+
+        return new Story((int) $row['id'], $row['code'], (int) $row['epic_id'], $row['title'], $row['description']);
     }
 
     public function listByEpicId(int $epicId): array

@@ -9,7 +9,7 @@ use App\Task\Domain\Model\EpicSummary;
 
 interface EpicRepositoryInterface
 {
-    public function create(string $title, ?string $description): Epic;
+    public function create(int $projectId, string $code, string $title, ?string $description): Epic;
 
     /** @return list<EpicSummary> */
     public function listAll(): array;

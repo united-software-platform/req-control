@@ -9,7 +9,7 @@ use App\Task\Domain\Model\StorySummary;
 
 interface StoryRepositoryInterface
 {
-    public function create(int $epicId, string $title, ?string $description): Story;
+    public function create(int $projectId, string $code, int $epicId, string $title, ?string $description): Story;
 
     /** @return list<StorySummary> */
     public function listByEpicId(int $epicId): array;

@@ -32,7 +32,7 @@ final readonly class CreateTaskTool
         $output = $this->useCase->execute(new CreateTaskInput($storyId, $title, $description));
 
         return CallToolResult::success(
-            content: [new TextContent(['id' => $output->id, 'title' => $output->title, 'status' => $output->status])],
+            content: [new TextContent(['id' => $output->id, 'code' => $output->code, 'title' => $output->title, 'status' => $output->status])],
         );
     }
 }
