@@ -10,8 +10,9 @@ final readonly class FunctionalRequirementDetail
         public int $id,
         public string $code,
         public string $description,
-        public int $projectId,
         public string $createdAt,
         public string $updatedAt,
+        /** @var list<RequirementTaskSummary> */
+        public array $tasks,
     ) {}
 }

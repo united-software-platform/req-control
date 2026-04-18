@@ -15,9 +15,7 @@ interface NonFunctionalRequirementRepositoryInterface
 
     public function findById(int $id): NonFunctionalRequirementDetail;
 
-    public function nextId(): int;
+    public function create(int $projectId, NonFunctionalRequirementType $type, string $description, ?string $acceptanceCriteria): NonFunctionalRequirement;
 
-    public function create(NonFunctionalRequirement $requirement, int $projectId, ?string $acceptanceCriteria): void;
-
-    public function update(int $id, ?string $description, ?NonFunctionalRequirementType $type, ?string $acceptanceCriteria): void;
+    public function updateDescription(int $id, string $description): void;
 }

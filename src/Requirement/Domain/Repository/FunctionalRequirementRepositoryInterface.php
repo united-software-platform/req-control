@@ -14,9 +14,7 @@ interface FunctionalRequirementRepositoryInterface
 
     public function findById(int $id): FunctionalRequirementDetail;
 
-    public function nextId(): int;
+    public function create(int $projectId, string $description): FunctionalRequirement;
 
-    public function create(FunctionalRequirement $requirement, int $projectId): void;
-
-    public function update(int $id, string $description): void;
+    public function updateDescription(int $id, string $description): void;
 }
