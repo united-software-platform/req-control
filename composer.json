@@ -1,7 +1,7 @@
 {
     "name": "req-control/app",
     "description": "Requirements Control Platform",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "type": "project",
     "require": {
         "php": "^8.4",
@@ -39,6 +39,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
+            "php-http/discovery": true,
             "phpstan/extension-installer": true
         }
     }

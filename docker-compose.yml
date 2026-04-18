@@ -61,10 +61,10 @@ services:
     container_name: reqcontrol_php
     restart: unless-stopped
     stdin_open: true
+    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /app
     volumes:
       - .:/app
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       postgres:
         condition: service_healthy
