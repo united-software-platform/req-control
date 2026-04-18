@@ -210,6 +210,22 @@ CREATE TABLE core.business_requirements (
 
 
 -- -----------------------------------------------------------------------------
+-- TABLE core.non_functional_requirements
+-- Нефункциональные требования к системе.
+-- -----------------------------------------------------------------------------
+
+CREATE TABLE core.non_functional_requirements (
+    id                  BIGSERIAL       PRIMARY KEY,
+    code                VARCHAR(20)     NOT NULL UNIQUE,    -- пример: NFT-001
+    type                VARCHAR(20)     NOT NULL,           -- performance, security, scalability, reliability
+    description         TEXT            NOT NULL,
+    acceptance_criteria TEXT,
+    created_at          TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+
+-- -----------------------------------------------------------------------------
 -- TABLE core.projects
 -- Проекты.
 -- -----------------------------------------------------------------------------
@@ -274,6 +290,7 @@ CREATE INDEX idx_core_project_entities_entity_id      ON core.project_entities (
 INSERT INTO core.entity_types (type) VALUES
     ('ft'),
     ('bt'),
+    ('nft'),
     ('epic'),
     ('story'),
     ('task'),
@@ -337,3 +354,4 @@ INSERT INTO core.statuses (id, name) VALUES
 -- 2026-04-19 | Alexey Gaybovich | добавлены plan, model в core.tasks
 -- 2026-04-19 | Alexey Gaybovich | создана core.task_functional_requirements (M:N task↔ft)
 -- 2026-04-19 | Alexey Gaybovich | создана core.task_business_requirements (M:N task↔bt)
+-- 2026-04-19 | Artyom Gaibovich | add core.non_functional_requirements; add entity_type 'nft' to core.entity_types
