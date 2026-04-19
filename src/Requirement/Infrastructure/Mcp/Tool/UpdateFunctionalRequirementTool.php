@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Requirement\Infrastructure\Mcp\Tool;
 
-use App\Requirement\Application\UseCase\UpdateFunctionalRequirementDescription\UpdateFunctionalRequirementDescriptionInput;
-use App\Requirement\Application\UseCase\UpdateFunctionalRequirementDescription\UpdateFunctionalRequirementDescriptionUseCaseInterface;
+use App\Requirement\Application\UseCase\UpdateFunctionalRequirement\UpdateFunctionalRequirementInput;
+use App\Requirement\Application\UseCase\UpdateFunctionalRequirement\UpdateFunctionalRequirementUseCaseInterface;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\Content\TextContent;
 use Mcp\Schema\Result\CallToolResult;
 
-final readonly class UpdateFunctionalRequirementDescriptionTool
+final readonly class UpdateFunctionalRequirementTool
 {
     public function __construct(
-        private UpdateFunctionalRequirementDescriptionUseCaseInterface $useCase,
+        private UpdateFunctionalRequirementUseCaseInterface $useCase,
     ) {}
 
     #[McpTool(
-        name: 'update_functional_requirement_description',
-        description: 'Обновляет описание функционального требования (ФТ). Обновляет поле description и updated_at.',
+        name: 'update_functional_requirement',
+        description: 'Обновляет функциональное требование (ФТ). Обновляет поле description и updated_at.',
     )]
     public function __invoke(
         #[Schema(description: 'ID функционального требования', minimum: 1)]
@@ -27,7 +27,7 @@ final readonly class UpdateFunctionalRequirementDescriptionTool
         #[Schema(description: 'Новое описание функционального требования', minLength: 1)]
         string $description,
     ): CallToolResult {
-        $this->useCase->execute(new UpdateFunctionalRequirementDescriptionInput($requirementId, $description));
+        $this->useCase->execute(new UpdateFunctionalRequirementInput($requirementId, $description));
 
         return CallToolResult::success(
             content: [new TextContent(['updated' => true, 'requirement_id' => $requirementId])],

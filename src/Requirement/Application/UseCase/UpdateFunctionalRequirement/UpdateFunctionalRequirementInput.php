@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Application\UseCase\UpdateFunctionalRequirementDescription;
+namespace App\Requirement\Application\UseCase\UpdateFunctionalRequirement;
 
-final readonly class UpdateFunctionalRequirementDescriptionInput
+final readonly class UpdateFunctionalRequirementInput
 {
     public function __construct(
         public int $requirementId,
