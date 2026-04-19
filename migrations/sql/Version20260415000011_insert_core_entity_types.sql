@@ -1,4 +1,4 @@
-Те--liquibase formatted sql
+--liquibase formatted sql
 
 --changeset gaybovich:insert-core-entity_types labels:insert comment:Начальное заполнение таблицы core.entity_types
 
