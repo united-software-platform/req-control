@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\UpdateBusinessRequirement;
 
-use App\Requirement\Domain\Repository\BusinessRequirementRepositoryInterface;
+use App\Requirement\Domain\Repository\BusinessRequirementWriteRepositoryInterface;
 
 final readonly class UpdateBusinessRequirementUseCase implements UpdateBusinessRequirementUseCaseInterface
 {
     public function __construct(
-        private BusinessRequirementRepositoryInterface $requirements,
+        private BusinessRequirementWriteRepositoryInterface $requirements,
     ) {}
 
     public function execute(UpdateBusinessRequirementInput $input): void

@@ -66,30 +66,4 @@ final readonly class PdoFunctionalRequirementRepository implements FunctionalReq
             $row['updated_at'],
         );
     }
-
-    public function nextId(): int
-    {
-        $stmt = $this->pdo->query("SELECT nextval('core.functional_requirements_id_seq')");
-
-        return (int) $stmt->fetchColumn();
-    }
-
-    public function create(FunctionalRequirement $requirement, int $projectId): void
-    {
-        $this->pdo->prepare(
-            'INSERT INTO core.functional_requirements (id, code, description) VALUES (:id, :code, :description)',
-        )->execute(['id' => $requirement->id, 'code' => $requirement->code, 'description' => $requirement->description]);
-
-        $this->pdo->prepare(
-            'INSERT INTO core.project_entities (project_id, entity_type_id, entity_id)
-             VALUES (:project_id, (SELECT id FROM core.entity_types WHERE type = \'ft\'), :entity_id)',
-        )->execute(['project_id' => $projectId, 'entity_id' => $requirement->id]);
-    }
-
-    public function update(int $id, string $description): void
-    {
-        $this->pdo->prepare(
-            'UPDATE core.functional_requirements SET description = :description, updated_at = now() WHERE id = :id',
-        )->execute(['description' => $description, 'id' => $id]);
-    }
 }

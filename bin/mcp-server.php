@@ -5,6 +5,36 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Requirement\Application\UseCase\CreateBusinessRequirement\CreateBusinessRequirementUseCase;
+use App\Requirement\Application\UseCase\CreateFunctionalRequirement\CreateFunctionalRequirementUseCase;
+use App\Requirement\Application\UseCase\CreateNonFunctionalRequirement\CreateNonFunctionalRequirementUseCase;
+use App\Requirement\Application\UseCase\GetBusinessRequirement\GetBusinessRequirementUseCase;
+use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRequirementUseCase;
+use App\Requirement\Application\UseCase\GetNonFunctionalRequirement\GetNonFunctionalRequirementUseCase;
+use App\Requirement\Application\UseCase\GetProjectBusinessRequirements\GetProjectBusinessRequirementsUseCase;
+use App\Requirement\Application\UseCase\GetProjectFunctionalRequirements\GetProjectFunctionalRequirementsUseCase;
+use App\Requirement\Application\UseCase\GetProjectNonFunctionalRequirements\GetProjectNonFunctionalRequirementsUseCase;
+use App\Requirement\Application\UseCase\UpdateBusinessRequirement\UpdateBusinessRequirementUseCase;
+use App\Requirement\Application\UseCase\UpdateFunctionalRequirement\UpdateFunctionalRequirementUseCase;
+use App\Requirement\Application\UseCase\UpdateNonFunctionalRequirement\UpdateNonFunctionalRequirementUseCase;
+use App\Requirement\Infrastructure\Mcp\Tool\CreateBusinessRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\CreateFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\CreateNonFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetBusinessRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetNonFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetProjectBusinessRequirementsTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetProjectFunctionalRequirementsTool;
+use App\Requirement\Infrastructure\Mcp\Tool\GetProjectNonFunctionalRequirementsTool;
+use App\Requirement\Infrastructure\Mcp\Tool\UpdateBusinessRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\UpdateFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Mcp\Tool\UpdateNonFunctionalRequirementTool;
+use App\Requirement\Infrastructure\Persistence\PdoBusinessRequirementRepository;
+use App\Requirement\Infrastructure\Persistence\PdoBusinessRequirementWriteRepository;
+use App\Requirement\Infrastructure\Persistence\PdoFunctionalRequirementRepository;
+use App\Requirement\Infrastructure\Persistence\PdoFunctionalRequirementWriteRepository;
+use App\Requirement\Infrastructure\Persistence\PdoNonFunctionalRequirementRepository;
+use App\Requirement\Infrastructure\Persistence\PdoNonFunctionalRequirementWriteRepository;
 use App\Task\Application\UseCase\CreateEpic\CreateEpicUseCase;
 use App\Task\Application\UseCase\CreateStory\CreateStoryUseCase;
 use App\Task\Application\UseCase\CreateTask\CreateTaskUseCase;
@@ -59,6 +89,12 @@ $codeGenerator          = new PostgresCodeGenerator($pdo, new EntityCodeGenerato
 $projectRepository      = new PdoProjectRepository($pdo);
 $projectEntityRepository = new PdoProjectEntityWriteRepository($pdo);
 
+$ftRepository       = new PdoFunctionalRequirementRepository($pdo);
+$ftWriteRepository  = new PdoFunctionalRequirementWriteRepository($pdo);
+$btRepository       = new PdoBusinessRequirementRepository($pdo);
+$btWriteRepository  = new PdoBusinessRequirementWriteRepository($pdo);
+$nftRepository      = new PdoNonFunctionalRequirementRepository($pdo);
+$nftWriteRepository = new PdoNonFunctionalRequirementWriteRepository($pdo);
 $epicWriteRepository  = new PdoEpicWriteRepository($pdo);
 $epicReadRepository   = new PdoEpicReadRepository($pdo);
 $storyWriteRepository = new PdoStoryWriteRepository($pdo);
@@ -113,6 +149,66 @@ $server = Server::builder()
         handler: new UpdateTaskTool(new UpdateTaskUseCase($taskWriteRepository, $taskReadRepository))(...),
         name: 'update_task',
         description: 'Обновляет поля задачи: title, description, readiness (0–100), status из справочника. Передавай только изменяемые поля.',
+    )
+    ->addTool(
+        handler: new GetProjectFunctionalRequirementsTool(new GetProjectFunctionalRequirementsUseCase($ftRepository))(...),
+        name: 'get_project_functional_requirements',
+        description: 'Возвращает плоский список функциональных требований (ФТ) проекта: id, код FT-XXX, краткое описание.',
+    )
+    ->addTool(
+        handler: new GetFunctionalRequirementTool(new GetFunctionalRequirementUseCase($ftRepository, $taskRepository))(...),
+        name: 'get_functional_requirement',
+        description: 'Возвращает детали функционального требования: код FT-XXX, полное описание, связанные задачи проекта (ids, статусы), created_at, updated_at.',
+    )
+    ->addTool(
+        handler: new CreateFunctionalRequirementTool(new CreateFunctionalRequirementUseCase($ftWriteRepository, $projectRepository, $codeGenerator))(...),
+        name: 'create_functional_requirement',
+        description: 'Создаёт функциональное требование (ФТ) и привязывает его к проекту. Возвращает id и код FT-XXX.',
+    )
+    ->addTool(
+        handler: new UpdateFunctionalRequirementTool(new UpdateFunctionalRequirementUseCase($ftWriteRepository))(...),
+        name: 'update_functional_requirement',
+        description: 'Обновляет функциональное требование (ФТ). Обновляет поле description и updated_at.',
+    )
+    ->addTool(
+        handler: new GetProjectBusinessRequirementsTool(new GetProjectBusinessRequirementsUseCase($btRepository))(...),
+        name: 'get_project_business_requirements',
+        description: 'Возвращает плоский список бизнес-требований (БТ) проекта: id, код BT-XXX, краткое описание.',
+    )
+    ->addTool(
+        handler: new GetBusinessRequirementTool(new GetBusinessRequirementUseCase($btRepository, $ftRepository))(...),
+        name: 'get_business_requirement',
+        description: 'Возвращает детали бизнес-требования: код BT-XXX, полное описание, связанные ФТ проекта (если есть), created_at, updated_at.',
+    )
+    ->addTool(
+        handler: new CreateBusinessRequirementTool(new CreateBusinessRequirementUseCase($btWriteRepository, $projectRepository, $codeGenerator))(...),
+        name: 'create_business_requirement',
+        description: 'Создаёт бизнес-требование (БТ) и привязывает его к проекту. Возвращает id и код BT-XXX.',
+    )
+    ->addTool(
+        handler: new UpdateBusinessRequirementTool(new UpdateBusinessRequirementUseCase($btWriteRepository))(...),
+        name: 'update_business_requirement',
+        description: 'Обновляет бизнес-требование (БТ). Обновляет поле description и updated_at.',
+    )
+    ->addTool(
+        handler: new GetProjectNonFunctionalRequirementsTool(new GetProjectNonFunctionalRequirementsUseCase($nftRepository))(...),
+        name: 'get_project_non_functional_requirements',
+        description: 'Возвращает список нефункциональных требований (НФТ) проекта: id, код NFT-XXX, тип, краткое описание.',
+    )
+    ->addTool(
+        handler: new GetNonFunctionalRequirementTool(new GetNonFunctionalRequirementUseCase($nftRepository))(...),
+        name: 'get_non_functional_requirement',
+        description: 'Возвращает детали нефункционального требования: код NFT-XXX, тип, полное описание, критерий приёмки, created_at, updated_at.',
+    )
+    ->addTool(
+        handler: new CreateNonFunctionalRequirementTool(new CreateNonFunctionalRequirementUseCase($nftWriteRepository, $projectRepository, $codeGenerator))(...),
+        name: 'create_non_functional_requirement',
+        description: 'Создаёт нефункциональное требование (НФТ) и привязывает его к проекту. Возвращает id и код NFT-XXX.',
+    )
+    ->addTool(
+        handler: new UpdateNonFunctionalRequirementTool(new UpdateNonFunctionalRequirementUseCase($nftWriteRepository))(...),
+        name: 'update_non_functional_requirement',
+        description: 'Обновляет нефункциональное требование (НФТ). Передавай только изменяемые поля: description, type, acceptanceCriteria.',
     )
     ->build();
 

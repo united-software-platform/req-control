@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\UpdateFunctionalRequirement;
 
-use App\Requirement\Domain\Repository\FunctionalRequirementRepositoryInterface;
+use App\Requirement\Domain\Repository\FunctionalRequirementWriteRepositoryInterface;
 
 final readonly class UpdateFunctionalRequirementUseCase implements UpdateFunctionalRequirementUseCaseInterface
 {
     public function __construct(
-        private FunctionalRequirementRepositoryInterface $requirements,
+        private FunctionalRequirementWriteRepositoryInterface $requirements,
     ) {}
 
     public function execute(UpdateFunctionalRequirementInput $input): void
