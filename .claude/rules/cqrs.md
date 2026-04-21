@@ -1,5 +1,18 @@
 ## CQRS
 
+### Правила
+
+| ID | Правило |
+|----|---------|
+| CQRS-001 | `*WriteRepositoryInterface` объявляется в Domain, содержит только мутации |
+| CQRS-002 | WriteRepository: запрет методов чтения (`findById` и др.) |
+| CQRS-003 | `*ReadRepositoryInterface` объявляется в Application, возвращает только read-DTO |
+| CQRS-004 | ReadRepository: запрет мутаций |
+| CQRS-005 | UseCase-запросы (Query) зависят только на `*ReadRepositoryInterface` |
+| CQRS-006 | Реализации Write и Read — отдельные классы в Infrastructure |
+
+---
+
 ### Принцип
 
 Операции чтения и записи разделены на уровне интерфейсов репозиториев. Один агрегат — два контракта:
@@ -9,12 +22,14 @@
 | `TaskWriteRepositoryInterface` | Domain | Работает с доменной моделью: `create`, `update`, `delete` |
 | `TaskReadRepositoryInterface` | Application | Возвращает read-DTO напрямую из SQL |
 
-### Правила
+### Подробное описание
 
-- **`*WriteRepositoryInterface`** объявляется в **Domain**. Методы принимают и возвращают доменные объекты (`Task`, `TaskId`). Только мутации и генерация идентификаторов. **Методы чтения (`findById` и др.) запрещены** — если команде нужно загрузить агрегат, она использует `*ReadRepositoryInterface`.
-- **`*ReadRepositoryInterface`** объявляется в **Application** — это контракт чтения, реализация которого обращается к инфраструктуре. Методы возвращают read-DTO (`*View`, `*Detail`, `*Summary`). Никаких мутаций.
-- **UseCase-запросы** зависят только на `*ReadRepositoryInterface`.
-- Реализации обоих интерфейсов — **отдельные классы** в Infrastructure-слоя.
+- **[CQRS-001]** **`*WriteRepositoryInterface`** объявляется в **Domain**. Методы принимают и возвращают доменные объекты (`Task`, `TaskId`). Только мутации и генерация идентификаторов.
+- **[CQRS-002]** WriteRepository: **методы чтения (`findById` и др.) запрещены** — если команде нужно загрузить агрегат, она использует `*ReadRepositoryInterface`.
+- **[CQRS-003]** **`*ReadRepositoryInterface`** объявляется в **Application** — это контракт чтения, реализация которого обращается к инфраструктуре. Методы возвращают read-DTO (`*View`, `*Detail`, `*Summary`).
+- **[CQRS-004]** ReadRepository: никаких мутаций.
+- **[CQRS-005]** **UseCase-запросы** зависят только на `*ReadRepositoryInterface`.
+- **[CQRS-006]** Реализации обоих интерфейсов — **отдельные классы** в Infrastructure-слое.
 
 ### Структура каталогов
 
