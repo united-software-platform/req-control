@@ -9,7 +9,7 @@ use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRe
 use App\Requirement\Domain\Model\FunctionalRequirementDetail;
 use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Task\Application\Dto\TaskSummary;
-use App\Task\Domain\Repository\TaskRepositoryInterface;
+use App\Task\Application\Repository\TaskReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetFunctionalRequirementUseCaseTest extends TestCase
@@ -36,7 +36,7 @@ final class GetFunctionalRequirementUseCaseTest extends TestCase
             ->with(3)
             ->willReturn($detail);
 
-        $taskRepository = $this->createMock(TaskRepositoryInterface::class);
+        $taskRepository = $this->createMock(TaskReadRepositoryInterface::class);
         $taskRepository->expects($this->once())
             ->method('listByProjectId')
             ->with(7)
@@ -63,7 +63,7 @@ final class GetFunctionalRequirementUseCaseTest extends TestCase
         $requirements = $this->createStub(FunctionalRequirementReadRepositoryInterface::class);
         $requirements->method('findById')->willReturn($detail);
 
-        $taskRepository = $this->createStub(TaskRepositoryInterface::class);
+        $taskRepository = $this->createStub(TaskReadRepositoryInterface::class);
         $taskRepository->method('listByProjectId')->willReturn([]);
 
         $useCase = new GetFunctionalRequirementUseCase($requirements, $taskRepository);

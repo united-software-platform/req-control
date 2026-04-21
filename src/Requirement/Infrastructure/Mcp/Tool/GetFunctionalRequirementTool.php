@@ -6,7 +6,7 @@ namespace App\Requirement\Infrastructure\Mcp\Tool;
 
 use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRequirementInput;
 use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRequirementUseCaseInterface;
-use App\Task\Domain\Model\TaskSummary;
+use App\Task\Application\Dto\TaskSummary;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Schema\Content\TextContent;

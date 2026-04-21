@@ -70,4 +70,25 @@ final readonly class PdoTaskReadRepository implements TaskReadRepositoryInterfac
             $rows,
         );
     }
+
+    public function listByProjectId(int $projectId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT t.id, t.title, t.status, t.readiness
+             FROM core.tasks t
+             INNER JOIN core.project_entities pe ON pe.entity_id = t.id
+             INNER JOIN core.entity_types et ON et.id = pe.entity_type_id AND et.type = \'task\'
+             WHERE pe.project_id = :project_id
+             ORDER BY t.id',
+        );
+        $stmt->execute(['project_id' => $projectId]);
+
+        /** @var list<array{id: int, title: string, status: int, readiness: int}> $rows */
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(
+            static fn (array $row) => new TaskSummary((int) $row['id'], $row['title'], (int) $row['status'], (int) $row['readiness']),
+            $rows,
+        );
+    }
 }
