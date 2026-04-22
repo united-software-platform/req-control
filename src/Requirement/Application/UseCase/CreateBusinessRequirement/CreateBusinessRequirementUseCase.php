@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Requirement\Application\UseCase\CreateBusinessRequirement;
+
+use App\Requirement\Application\Repository\RequirementEntityLinkRepositoryInterface;
+use App\Requirement\Domain\Model\BusinessRequirement;
+use App\Requirement\Domain\Model\RequirementEntityType;
+use App\Requirement\Domain\Repository\BusinessRequirementWriteRepositoryInterface;
+use App\Shared\Application\Service\CodeGeneratorInterface;
+use App\Task\Application\Repository\ProjectReadRepositoryInterface;
+
+final readonly class CreateBusinessRequirementUseCase implements CreateBusinessRequirementUseCaseInterface
+{
+    public function __construct(
+        private BusinessRequirementWriteRepositoryInterface $requirements,
+        private ProjectReadRepositoryInterface $projects,
+        private RequirementEntityLinkRepositoryInterface $entityLinks,
+        private CodeGeneratorInterface $codeGenerator,
+    ) {}
+
+    public function execute(CreateBusinessRequirementInput $input): CreateBusinessRequirementOutput
+    {
+        $project = $this->projects->findById($input->projectId);
+        $code = $this->codeGenerator->generate($project->code, RequirementEntityType::BusinessRequirement->value);
+
+        $requirement = $this->requirements->create(new BusinessRequirement(0, $code, $input->description));
+
+        $this->entityLinks->link($project->id, $requirement->id, RequirementEntityType::BusinessRequirement);
+
+        return new CreateBusinessRequirementOutput($requirement->id, $requirement->code);
+    }
+}

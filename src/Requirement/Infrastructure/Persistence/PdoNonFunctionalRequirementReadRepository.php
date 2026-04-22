@@ -1,0 +1,74 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Requirement\Infrastructure\Persistence;
+
+use App\Requirement\Application\Dto\NonFunctionalRequirementDetail;
+use App\Requirement\Application\Repository\NonFunctionalRequirementReadRepositoryInterface;
+use App\Requirement\Domain\Model\NonFunctionalRequirement;
+use App\Requirement\Domain\Model\NonFunctionalRequirementType;
+use PDO;
+use RuntimeException;
+
+final readonly class PdoNonFunctionalRequirementReadRepository implements NonFunctionalRequirementReadRepositoryInterface
+{
+    public function __construct(
+        private PDO $pdo,
+    ) {}
+
+    public function listByProjectId(int $projectId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT nfr.id, nfr.code, nfr.type, nfr.description
+             FROM core.non_functional_requirements nfr
+             INNER JOIN core.project_entities pe ON pe.entity_id = nfr.id
+             INNER JOIN core.entity_types et ON et.id = pe.entity_type_id AND et.type = \'nft\'
+             WHERE pe.project_id = :project_id
+             ORDER BY nfr.id',
+        );
+        $stmt->execute(['project_id' => $projectId]);
+
+        /** @var list<array{id: int, code: string, type: string, description: string}> $rows */
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(
+            static fn (array $row) => new NonFunctionalRequirement(
+                (int) $row['id'],
+                $row['code'],
+                NonFunctionalRequirementType::from($row['type']),
+                $row['description'],
+            ),
+            $rows,
+        );
+    }
+
+    public function findById(int $id): NonFunctionalRequirementDetail
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, code, type, description, acceptance_criteria,
+                    to_char(created_at AT TIME ZONE \'UTC\', \'YYYY-MM-DD"T"HH24:MI:SS"Z"\') AS created_at,
+                    to_char(updated_at AT TIME ZONE \'UTC\', \'YYYY-MM-DD"T"HH24:MI:SS"Z"\') AS updated_at
+             FROM core.non_functional_requirements
+             WHERE id = :id',
+        );
+        $stmt->execute(['id' => $id]);
+
+        /** @var array{id: int, code: string, type: string, description: string, acceptance_criteria: null|string, created_at: string, updated_at: string}|false $row */
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (false === $row) {
+            throw new RuntimeException(sprintf('NonFunctionalRequirement #%d not found', $id));
+        }
+
+        return new NonFunctionalRequirementDetail(
+            (int) $row['id'],
+            $row['code'],
+            NonFunctionalRequirementType::from($row['type']),
+            $row['description'],
+            $row['acceptance_criteria'],
+            $row['created_at'],
+            $row['updated_at'],
+        );
+    }
+}

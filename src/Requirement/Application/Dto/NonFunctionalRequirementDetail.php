@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Requirement\Application\Dto;
+
+use App\Requirement\Domain\Model\NonFunctionalRequirementType;
+
+final readonly class NonFunctionalRequirementDetail
+{
+    public function __construct(
+        public int $id,
+        public string $code,
+        public NonFunctionalRequirementType $type,
+        public string $description,
+        public ?string $acceptanceCriteria,
+        public string $createdAt,
+        public string $updatedAt,
+    ) {}
+}

@@ -13,4 +13,7 @@ interface TaskReadRepositoryInterface
 
     /** @return list<TaskSummary> */
     public function listByStoryId(int $storyId): array;
+
+    /** @return list<TaskSummary> */
+    public function listByProjectId(int $projectId): array;
 }
