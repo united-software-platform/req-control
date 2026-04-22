@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Requirement\Infrastructure\Persistence;
 
+use App\Requirement\Application\Dto\NonFunctionalRequirementDetail;
+use App\Requirement\Application\Repository\NonFunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Domain\Model\NonFunctionalRequirement;
-use App\Requirement\Domain\Model\NonFunctionalRequirementDetail;
 use App\Requirement\Domain\Model\NonFunctionalRequirementType;
-use App\Requirement\Domain\Repository\NonFunctionalRequirementReadRepositoryInterface;
 use PDO;
 use RuntimeException;
 

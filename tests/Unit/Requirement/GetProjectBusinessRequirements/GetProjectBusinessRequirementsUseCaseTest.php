@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\GetProjectBusinessRequirements;
 
+use App\Requirement\Application\Repository\BusinessRequirementReadRepositoryInterface;
 use App\Requirement\Application\UseCase\GetProjectBusinessRequirements\GetProjectBusinessRequirementsInput;
 use App\Requirement\Application\UseCase\GetProjectBusinessRequirements\GetProjectBusinessRequirementsUseCase;
 use App\Requirement\Domain\Model\BusinessRequirement;
-use App\Requirement\Domain\Repository\BusinessRequirementReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetProjectBusinessRequirementsUseCaseTest extends TestCase

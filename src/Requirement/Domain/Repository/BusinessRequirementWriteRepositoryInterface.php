@@ -8,7 +8,7 @@ use App\Requirement\Domain\Model\BusinessRequirement;
 
 interface BusinessRequirementWriteRepositoryInterface
 {
-    public function create(int $projectId, string $code, string $description): BusinessRequirement;
+    public function create(BusinessRequirement $requirement): BusinessRequirement;
 
-    public function update(int $id, string $description): void;
+    public function update(BusinessRequirement $requirement): void;
 }

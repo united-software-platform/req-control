@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\CreateNonFunctionalRequirement;
 
+use App\Requirement\Application\Repository\RequirementEntityLinkRepositoryInterface;
 use App\Requirement\Application\UseCase\CreateNonFunctionalRequirement\CreateNonFunctionalRequirementInput;
 use App\Requirement\Application\UseCase\CreateNonFunctionalRequirement\CreateNonFunctionalRequirementUseCase;
 use App\Requirement\Domain\Model\NonFunctionalRequirement;
@@ -12,7 +13,7 @@ use App\Requirement\Domain\Model\RequirementEntityType;
 use App\Requirement\Domain\Repository\NonFunctionalRequirementWriteRepositoryInterface;
 use App\Shared\Application\Service\CodeGeneratorInterface;
 use App\Task\Domain\Model\Project;
-use App\Task\Domain\Repository\ProjectRepositoryInterface;
+use App\Task\Application\Repository\ProjectReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class CreateNonFunctionalRequirementUseCaseTest extends TestCase
@@ -25,7 +26,7 @@ final class CreateNonFunctionalRequirementUseCaseTest extends TestCase
         $description = 'Response time under 200ms';
         $acceptanceCriteria = 'p99 latency < 200ms';
 
-        $projects = $this->createMock(ProjectRepositoryInterface::class);
+        $projects = $this->createMock(ProjectReadRepositoryInterface::class);
         $projects->expects($this->once())
             ->method('findById')
             ->with(3)
@@ -37,15 +38,20 @@ final class CreateNonFunctionalRequirementUseCaseTest extends TestCase
             ->with('SVC', RequirementEntityType::NonFunctionalRequirement->value)
             ->willReturn($generatedCode);
 
-        $requirement = new NonFunctionalRequirement(id: 11, code: $generatedCode, type: $type, description: $description);
+        $requirement = new NonFunctionalRequirement(id: 11, code: $generatedCode, type: $type, description: $description, acceptanceCriteria: $acceptanceCriteria);
 
         $requirements = $this->createMock(NonFunctionalRequirementWriteRepositoryInterface::class);
         $requirements->expects($this->once())
             ->method('create')
-            ->with(3, $generatedCode, $type, $description, $acceptanceCriteria)
+            ->with(new NonFunctionalRequirement(0, $generatedCode, $type, $description, $acceptanceCriteria))
             ->willReturn($requirement);
 
-        $useCase = new CreateNonFunctionalRequirementUseCase($requirements, $projects, $codeGenerator);
+        $entityLinks = $this->createMock(RequirementEntityLinkRepositoryInterface::class);
+        $entityLinks->expects($this->once())
+            ->method('link')
+            ->with(3, 11, RequirementEntityType::NonFunctionalRequirement);
+
+        $useCase = new CreateNonFunctionalRequirementUseCase($requirements, $projects, $entityLinks, $codeGenerator);
         $output = $useCase->execute(new CreateNonFunctionalRequirementInput(
             projectId: 3,
             type: $type,
@@ -62,7 +68,7 @@ final class CreateNonFunctionalRequirementUseCaseTest extends TestCase
         $project = new Project(id: 1, code: 'X');
         $type = NonFunctionalRequirementType::Security;
 
-        $projects = $this->createStub(ProjectRepositoryInterface::class);
+        $projects = $this->createStub(ProjectReadRepositoryInterface::class);
         $projects->method('findById')->willReturn($project);
 
         $codeGenerator = $this->createStub(CodeGeneratorInterface::class);
@@ -73,10 +79,12 @@ final class CreateNonFunctionalRequirementUseCaseTest extends TestCase
         $requirements = $this->createMock(NonFunctionalRequirementWriteRepositoryInterface::class);
         $requirements->expects($this->once())
             ->method('create')
-            ->with(1, 'X-NFT-1', $type, 'desc', null)
+            ->with(new NonFunctionalRequirement(0, 'X-NFT-1', $type, 'desc', null))
             ->willReturn($requirement);
 
-        $useCase = new CreateNonFunctionalRequirementUseCase($requirements, $projects, $codeGenerator);
+        $entityLinks = $this->createStub(RequirementEntityLinkRepositoryInterface::class);
+
+        $useCase = new CreateNonFunctionalRequirementUseCase($requirements, $projects, $entityLinks, $codeGenerator);
         $useCase->execute(new CreateNonFunctionalRequirementInput(
             projectId: 1,
             type: $type,

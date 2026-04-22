@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\GetProjectBusinessRequirements;
 
-use App\Requirement\Domain\Repository\BusinessRequirementReadRepositoryInterface;
+use App\Requirement\Application\Repository\BusinessRequirementReadRepositoryInterface;
 
 final readonly class GetProjectBusinessRequirementsUseCase implements GetProjectBusinessRequirementsUseCaseInterface
 {

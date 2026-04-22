@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\GetProjectFunctionalRequirements;
 
+use App\Requirement\Application\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Application\UseCase\GetProjectFunctionalRequirements\GetProjectFunctionalRequirementsInput;
 use App\Requirement\Application\UseCase\GetProjectFunctionalRequirements\GetProjectFunctionalRequirementsUseCase;
 use App\Requirement\Domain\Model\FunctionalRequirement;
-use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetProjectFunctionalRequirementsUseCaseTest extends TestCase

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Requirement\Infrastructure\Persistence;
 
+use App\Requirement\Application\Dto\FunctionalRequirementDetail;
+use App\Requirement\Application\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Domain\Model\FunctionalRequirement;
-use App\Requirement\Domain\Model\FunctionalRequirementDetail;
-use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
 use PDO;
 use RuntimeException;
 

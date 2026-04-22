@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\GetNonFunctionalRequirement;
 
-use App\Requirement\Domain\Repository\NonFunctionalRequirementReadRepositoryInterface;
+use App\Requirement\Application\Repository\NonFunctionalRequirementReadRepositoryInterface;
 
 final readonly class GetNonFunctionalRequirementUseCase implements GetNonFunctionalRequirementUseCaseInterface
 {

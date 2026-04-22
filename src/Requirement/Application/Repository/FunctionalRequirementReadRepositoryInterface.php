@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Domain\Repository;
+namespace App\Requirement\Application\Repository;
 
+use App\Requirement\Application\Dto\FunctionalRequirementDetail;
 use App\Requirement\Domain\Model\FunctionalRequirement;
-use App\Requirement\Domain\Model\FunctionalRequirementDetail;
 
 interface FunctionalRequirementReadRepositoryInterface
 {

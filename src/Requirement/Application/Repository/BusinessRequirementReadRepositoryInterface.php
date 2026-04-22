@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Domain\Repository;
+namespace App\Requirement\Application\Repository;
 
+use App\Requirement\Application\Dto\BusinessRequirementDetail;
 use App\Requirement\Domain\Model\BusinessRequirement;
-use App\Requirement\Domain\Model\BusinessRequirementDetail;
 
 interface BusinessRequirementReadRepositoryInterface
 {

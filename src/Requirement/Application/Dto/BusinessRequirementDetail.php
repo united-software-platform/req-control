@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Domain\Model;
+namespace App\Requirement\Application\Dto;
 
-final readonly class FunctionalRequirementDetail
+final readonly class BusinessRequirementDetail
 {
     public function __construct(
         public int $id,

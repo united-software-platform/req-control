@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Domain\Repository;
+namespace App\Requirement\Application\Repository;
 
+use App\Requirement\Application\Dto\NonFunctionalRequirementDetail;
 use App\Requirement\Domain\Model\NonFunctionalRequirement;
-use App\Requirement\Domain\Model\NonFunctionalRequirementDetail;
 
 interface NonFunctionalRequirementReadRepositoryInterface
 {

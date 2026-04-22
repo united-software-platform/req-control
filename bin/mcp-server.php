@@ -35,6 +35,7 @@ use App\Requirement\Infrastructure\Persistence\PdoFunctionalRequirementReadRepos
 use App\Requirement\Infrastructure\Persistence\PdoFunctionalRequirementWriteRepository;
 use App\Requirement\Infrastructure\Persistence\PdoNonFunctionalRequirementReadRepository;
 use App\Requirement\Infrastructure\Persistence\PdoNonFunctionalRequirementWriteRepository;
+use App\Requirement\Infrastructure\Persistence\PdoRequirementEntityLinkRepository;
 use App\Task\Application\UseCase\CreateEpic\CreateEpicUseCase;
 use App\Task\Application\UseCase\CreateStory\CreateStoryUseCase;
 use App\Task\Application\UseCase\CreateTask\CreateTaskUseCase;
@@ -95,6 +96,7 @@ $btReadRepository   = new PdoBusinessRequirementReadRepository($pdo);
 $btWriteRepository  = new PdoBusinessRequirementWriteRepository($pdo);
 $nftReadRepository  = new PdoNonFunctionalRequirementReadRepository($pdo);
 $nftWriteRepository = new PdoNonFunctionalRequirementWriteRepository($pdo);
+$entityLinkRepository = new PdoRequirementEntityLinkRepository($pdo);
 $epicWriteRepository  = new PdoEpicWriteRepository($pdo);
 $epicReadRepository   = new PdoEpicReadRepository($pdo);
 $storyWriteRepository = new PdoStoryWriteRepository($pdo);
@@ -161,12 +163,12 @@ $server = Server::builder()
         description: 'Возвращает детали функционального требования: код FT-XXX, полное описание, связанные задачи проекта (ids, статусы), created_at, updated_at.',
     )
     ->addTool(
-        handler: new CreateFunctionalRequirementTool(new CreateFunctionalRequirementUseCase($ftWriteRepository, $projectRepository, $codeGenerator))(...),
+        handler: new CreateFunctionalRequirementTool(new CreateFunctionalRequirementUseCase($ftWriteRepository, $projectRepository, $entityLinkRepository, $codeGenerator))(...),
         name: 'create_functional_requirement',
         description: 'Создаёт функциональное требование (ФТ) и привязывает его к проекту. Возвращает id и код FT-XXX.',
     )
     ->addTool(
-        handler: new UpdateFunctionalRequirementTool(new UpdateFunctionalRequirementUseCase($ftWriteRepository))(...),
+        handler: new UpdateFunctionalRequirementTool(new UpdateFunctionalRequirementUseCase($ftWriteRepository, $ftReadRepository))(...),
         name: 'update_functional_requirement',
         description: 'Обновляет функциональное требование (ФТ). Обновляет поле description и updated_at.',
     )
@@ -181,12 +183,12 @@ $server = Server::builder()
         description: 'Возвращает детали бизнес-требования: код BT-XXX, полное описание, связанные ФТ проекта (если есть), created_at, updated_at.',
     )
     ->addTool(
-        handler: new CreateBusinessRequirementTool(new CreateBusinessRequirementUseCase($btWriteRepository, $projectRepository, $codeGenerator))(...),
+        handler: new CreateBusinessRequirementTool(new CreateBusinessRequirementUseCase($btWriteRepository, $projectRepository, $entityLinkRepository, $codeGenerator))(...),
         name: 'create_business_requirement',
         description: 'Создаёт бизнес-требование (БТ) и привязывает его к проекту. Возвращает id и код BT-XXX.',
     )
     ->addTool(
-        handler: new UpdateBusinessRequirementTool(new UpdateBusinessRequirementUseCase($btWriteRepository))(...),
+        handler: new UpdateBusinessRequirementTool(new UpdateBusinessRequirementUseCase($btWriteRepository, $btReadRepository))(...),
         name: 'update_business_requirement',
         description: 'Обновляет бизнес-требование (БТ). Обновляет поле description и updated_at.',
     )
@@ -201,12 +203,12 @@ $server = Server::builder()
         description: 'Возвращает детали нефункционального требования: код NFT-XXX, тип, полное описание, критерий приёмки, created_at, updated_at.',
     )
     ->addTool(
-        handler: new CreateNonFunctionalRequirementTool(new CreateNonFunctionalRequirementUseCase($nftWriteRepository, $projectRepository, $codeGenerator))(...),
+        handler: new CreateNonFunctionalRequirementTool(new CreateNonFunctionalRequirementUseCase($nftWriteRepository, $projectRepository, $entityLinkRepository, $codeGenerator))(...),
         name: 'create_non_functional_requirement',
         description: 'Создаёт нефункциональное требование (НФТ) и привязывает его к проекту. Возвращает id и код NFT-XXX.',
     )
     ->addTool(
-        handler: new UpdateNonFunctionalRequirementTool(new UpdateNonFunctionalRequirementUseCase($nftWriteRepository))(...),
+        handler: new UpdateNonFunctionalRequirementTool(new UpdateNonFunctionalRequirementUseCase($nftWriteRepository, $nftReadRepository))(...),
         name: 'update_non_functional_requirement',
         description: 'Обновляет нефункциональное требование (НФТ). Передавай только изменяемые поля: description, type, acceptanceCriteria.',
     )

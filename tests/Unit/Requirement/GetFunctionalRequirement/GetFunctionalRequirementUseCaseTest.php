@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\GetFunctionalRequirement;
 
+use App\Requirement\Application\Dto\FunctionalRequirementDetail;
+use App\Requirement\Application\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRequirementInput;
 use App\Requirement\Application\UseCase\GetFunctionalRequirement\GetFunctionalRequirementUseCase;
-use App\Requirement\Domain\Model\FunctionalRequirementDetail;
-use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Task\Application\Dto\TaskSummary;
 use App\Task\Application\Repository\TaskReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;

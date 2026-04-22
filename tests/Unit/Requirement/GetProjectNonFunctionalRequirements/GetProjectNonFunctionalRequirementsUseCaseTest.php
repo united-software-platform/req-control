@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\GetProjectNonFunctionalRequirements;
 
+use App\Requirement\Application\Repository\NonFunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Application\UseCase\GetProjectNonFunctionalRequirements\GetProjectNonFunctionalRequirementsInput;
 use App\Requirement\Application\UseCase\GetProjectNonFunctionalRequirements\GetProjectNonFunctionalRequirementsUseCase;
 use App\Requirement\Domain\Model\NonFunctionalRequirement;
 use App\Requirement\Domain\Model\NonFunctionalRequirementType;
-use App\Requirement\Domain\Repository\NonFunctionalRequirementReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetProjectNonFunctionalRequirementsUseCaseTest extends TestCase

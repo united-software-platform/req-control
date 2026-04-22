@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\GetNonFunctionalRequirement;
 
-use App\Requirement\Domain\Model\NonFunctionalRequirementDetail;
+use App\Requirement\Application\Dto\NonFunctionalRequirementDetail;
 
 final readonly class GetNonFunctionalRequirementOutput
 {

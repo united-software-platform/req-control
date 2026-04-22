@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\GetFunctionalRequirement;
 
-use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
+use App\Requirement\Application\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Task\Application\Repository\TaskReadRepositoryInterface;
 
 final readonly class GetFunctionalRequirementUseCase implements GetFunctionalRequirementUseCaseInterface

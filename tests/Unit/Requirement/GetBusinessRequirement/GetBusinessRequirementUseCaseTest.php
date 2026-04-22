@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Requirement\GetBusinessRequirement;
 
+use App\Requirement\Application\Dto\BusinessRequirementDetail;
+use App\Requirement\Application\Repository\BusinessRequirementReadRepositoryInterface;
+use App\Requirement\Application\Repository\FunctionalRequirementReadRepositoryInterface;
 use App\Requirement\Application\UseCase\GetBusinessRequirement\GetBusinessRequirementInput;
 use App\Requirement\Application\UseCase\GetBusinessRequirement\GetBusinessRequirementUseCase;
-use App\Requirement\Domain\Model\BusinessRequirementDetail;
 use App\Requirement\Domain\Model\FunctionalRequirement;
-use App\Requirement\Domain\Repository\BusinessRequirementReadRepositoryInterface;
-use App\Requirement\Domain\Repository\FunctionalRequirementReadRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 final class GetBusinessRequirementUseCaseTest extends TestCase

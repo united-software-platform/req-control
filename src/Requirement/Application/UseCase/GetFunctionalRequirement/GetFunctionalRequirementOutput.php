@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Requirement\Application\UseCase\GetFunctionalRequirement;
 
-use App\Requirement\Domain\Model\FunctionalRequirementDetail;
+use App\Requirement\Application\Dto\FunctionalRequirementDetail;
 use App\Task\Application\Dto\TaskSummary;
 
 final readonly class GetFunctionalRequirementOutput

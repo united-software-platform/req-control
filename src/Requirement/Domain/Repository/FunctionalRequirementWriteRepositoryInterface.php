@@ -8,7 +8,7 @@ use App\Requirement\Domain\Model\FunctionalRequirement;
 
 interface FunctionalRequirementWriteRepositoryInterface
 {
-    public function create(int $projectId, string $code, string $description): FunctionalRequirement;
+    public function create(FunctionalRequirement $requirement): FunctionalRequirement;
 
-    public function update(int $id, string $description): void;
+    public function update(FunctionalRequirement $requirement): void;
 }

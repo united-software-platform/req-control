@@ -11,5 +11,6 @@ final readonly class NonFunctionalRequirement
         public string $code,
         public NonFunctionalRequirementType $type,
         public string $description,
+        public ?string $acceptanceCriteria = null,
     ) {}
 }

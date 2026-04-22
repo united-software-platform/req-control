@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Requirement\Domain\Model;
+namespace App\Requirement\Application\Dto;
+
+use App\Requirement\Domain\Model\NonFunctionalRequirementType;
 
 final readonly class NonFunctionalRequirementDetail
 {
