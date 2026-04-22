@@ -51,18 +51,10 @@ TABLE tasks : нижний уровень иерархии
 INDEX idx_core_tasks_story_id (story_id)
 INDEX idx_core_tasks_status   (status)
 
-TABLE task_contracts : опциональный контракт модели данных для задачи
-  id          BIGSERIAL    NN PK
-  task_id     BIGINT       NN FK:tasks.id UNIQUE -- one-to-one, у задачи максимум один контракт
-  tables      TEXT                               -- TOON-encoded; NULL если контракт не нужен (багфикс и др.)
-  created_at  TIMESTAMPTZ  NN DEFAULT:NOW()
-  updated_at  TIMESTAMPTZ  NN DEFAULT:NOW()
-
 ; RELATIONSHIPS
 REL epics    -> stories via stories.epic_id   (1:N)
 REL stories  -> tasks   via tasks.story_id    (1:N)
 REL statuses -> tasks   via tasks.status      (1:N)
-REL tasks          -> task_contracts via task_contracts.task_id (1:1)
 
 ; HIERARCHY
 ; Epic → Story → Task
@@ -71,7 +63,8 @@ REL tasks          -> task_contracts via task_contracts.task_id (1:1)
 ; story.readiness = AVG(tasks.readiness)   WHERE story_id = story.id
 ; epic.readiness  = AVG(stories.readiness) WHERE epic_id  = epic.id
 
-; TOON SCHEMA — task_contracts.tables
+
+; TOON SCHEMA — task.contract
 ;
 ; Описывает массив таблиц БД, затрагиваемых задачей.
 ; Формат: TOON (Token-Oriented Object Notation)
@@ -91,6 +84,6 @@ REL tasks          -> task_contracts via task_contracts.task_id (1:1)
 ;       <rel_type>, <schema.table>, <col_name>
 
 ; NOTES
-; task_contracts.tables — TEXT, TOON-encoded (Token-Oriented Object Notation)
+; task.contract — TEXT, TOON-encoded (Token-Oriented Object Notation)
 ; валидация формата на уровне приложения (PHP), не на уровне БД
 ; ON DELETE CASCADE: удаление задачи каскадно удаляет её контракт

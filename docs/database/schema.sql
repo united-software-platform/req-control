@@ -182,27 +182,6 @@ CREATE INDEX idx_core_task_bt_requirement_id ON core.task_business_requirements 
 
 
 -- -----------------------------------------------------------------------------
--- TABLE core.task_contracts
--- Контракт задачи: таблицы, затрагиваемые задачей (TOON-encoded). Nullable —
--- багфикс может не иметь контракта.
--- -----------------------------------------------------------------------------
-
-CREATE TABLE core.task_contracts (
-    id          BIGSERIAL     PRIMARY KEY,
-    task_id     BIGINT        NOT NULL UNIQUE,
-    tables      TEXT,                              -- TOON-encoded, nullable (багфикс может не иметь контракта)
-    created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT fk_task_contracts_task_id
-        FOREIGN KEY (task_id)
-            REFERENCES core.tasks(id)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE
-);
-
-
--- -----------------------------------------------------------------------------
 -- TABLE core.functional_requirements
 -- Функциональные требования к системе.
 -- -----------------------------------------------------------------------------
@@ -355,11 +334,6 @@ INSERT INTO core.statuses (id, name) VALUES
 --   ON DELETE CASCADE (task) — при удалении задачи связи удаляются автоматически.
 --   ON DELETE RESTRICT (bt) — нельзя удалить БТ, пока на него ссылается задача.
 --
--- core.tasks.id  ←  core.task_contracts.task_id  (1:1)
---   Каждая задача может иметь не более одного контракта (UNIQUE на task_id).
---   ON DELETE CASCADE — при удалении задачи контракт удаляется автоматически.
---   ON UPDATE CASCADE.
---
 -- Иерархия:
 --   Epic
 --    └── Story
@@ -381,4 +355,3 @@ INSERT INTO core.statuses (id, name) VALUES
 -- 2026-04-19 | Alexey Gaybovich | создана core.task_functional_requirements (M:N task↔ft)
 -- 2026-04-19 | Alexey Gaybovich | создана core.task_business_requirements (M:N task↔bt)
 -- 2026-04-19 | Artyom Gaibovich | add core.non_functional_requirements; add entity_type 'nft' to core.entity_types
--- 2026-04-22 | Artyom Gaibovich | создана core.task_contracts (1:1 к core.tasks, TOON-encoded контракт задачи)
