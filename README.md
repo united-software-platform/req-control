@@ -1,5 +1,6 @@
 # REQ-CONTROL СТР — Централизованная система управления требованиями
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![PHPStan](https://github.com/united-software-platform/req-control/actions/workflows/phpstan.yml/badge.svg?branch=main)](https://github.com/united-software-platform/req-control/actions/workflows/phpstan.yml)
 [![PHP CS Fixer](https://github.com/united-software-platform/req-control/actions/workflows/php-cs-fixer.yml/badge.svg?branch=main)](https://github.com/united-software-platform/req-control/actions/workflows/php-cs-fixer.yml)
 [![Deptrac](https://github.com/united-software-platform/req-control/actions/workflows/deptrac.yml/badge.svg?branch=main)](https://github.com/united-software-platform/req-control/actions/workflows/deptrac.yml)
