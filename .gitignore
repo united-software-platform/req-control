@@ -15,6 +15,10 @@ vendor/
 data/postgres/
 data/rabbitmq/
 
+# TLDR tool
+.tldr/
+.tldrignore
+
 # PHP tools cache
 .php-cs-fixer.cache
 .phpunit.cache/
