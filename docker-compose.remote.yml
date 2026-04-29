@@ -1,0 +1,8 @@
+services:
+  php:
+    environment:
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_PORT: "${SSH_TUNNEL_LOCAL_PORT:-15432}"
+      POSTGRES_DB: "${REMOTE_DB_NAME}"
+      POSTGRES_USER: "${REMOTE_DB_USER}"
+      POSTGRES_PASSWORD: "${REMOTE_DB_PASSWORD}"

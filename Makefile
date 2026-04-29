@@ -103,6 +103,40 @@ migrate-remote:
 	; echo "SSH-туннель закрыт." \
 	; exit $$EXIT_CODE
 
+# Запустить приложение с удалённой БД через SSH-туннель.
+# Переменные те же, что у migrate-remote (SSH_HOST, SSH_KEY, REMOTE_DB_*).
+# Туннель живёт до вызова make down-remote.
+up-remote:
+	@test -n "$(SSH_HOST)"             || (echo "Ошибка: SSH_HOST не задан"          && exit 1)
+	@test -n "$(REMOTE_DB_NAME)"       || (echo "Ошибка: REMOTE_DB_NAME не задан"    && exit 1)
+	@test -n "$(REMOTE_DB_USER)"       || (echo "Ошибка: REMOTE_DB_USER не задан"    && exit 1)
+	@test -n "$(REMOTE_DB_PASSWORD)"   || (echo "Ошибка: REMOTE_DB_PASSWORD не задан"&& exit 1)
+	@echo "Открываем SSH-туннель $(SSH_TUNNEL_LOCAL_PORT) → $(SSH_HOST):$(REMOTE_DB_HOST):$(REMOTE_DB_PORT)..."
+	@ssh -f -N \
+		-i $(SSH_KEY) \
+		-L 0.0.0.0:$(SSH_TUNNEL_LOCAL_PORT):$(REMOTE_DB_HOST):$(REMOTE_DB_PORT) \
+		$(SSH_HOST) \
+		-o ExitOnForwardFailure=yes \
+		-o ServerAliveInterval=15
+	@for i in $$(seq 1 15); do \
+		nc -z 127.0.0.1 $(SSH_TUNNEL_LOCAL_PORT) 2>/dev/null && break; \
+		echo "  Попытка $$i/15..."; \
+		sleep 1; \
+	done
+	@nc -z 127.0.0.1 $(SSH_TUNNEL_LOCAL_PORT) 2>/dev/null || (echo "Ошибка: туннель не поднялся за 15 секунд" && pkill -f "ssh.*$(SSH_TUNNEL_LOCAL_PORT)" 2>/dev/null; exit 1)
+	@echo "Туннель открыт. Запускаем приложение с удалённой БД..."
+	@SSH_TUNNEL_LOCAL_PORT=$(SSH_TUNNEL_LOCAL_PORT) \
+	 REMOTE_DB_NAME=$(REMOTE_DB_NAME) \
+	 REMOTE_DB_USER=$(REMOTE_DB_USER) \
+	 REMOTE_DB_PASSWORD='$(value REMOTE_DB_PASSWORD)' \
+	 $(DOCKER_COMPOSE_COMMAND) -f docker-compose.yml -f docker-compose.remote.yml up -d --remove-orphans
+	@echo "Приложение запущено. Для остановки: make down-remote SSH_TUNNEL_LOCAL_PORT=$(SSH_TUNNEL_LOCAL_PORT)"
+
+down-remote:
+	@$(DOCKER_COMPOSE_COMMAND) down --remove-orphans
+	@pkill -f "ssh.*$(SSH_TUNNEL_LOCAL_PORT)" 2>/dev/null || true
+	@echo "Приложение остановлено, SSH-туннель закрыт."
+
 code-setup:
 	make analyze-code
 	make fix-style
